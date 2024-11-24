@@ -1,0 +1,24 @@
+{
+  "Version": 1,
+  "Hash": "kgS5Fg6mDneJLWPTGEjNLzoq1l1Xl+imuQQWCrX0V0g=",
+  "Source": "lab3-5.Server",
+  "BasePath": "_content/lab3-5.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "D:\\uni\\3 course\\1 sem\\kpz\\lab3-5\\lab3-5.client\\lab3-5.client.esproj",
+      "Version": 2,
+      "Source": "lab3-5.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
