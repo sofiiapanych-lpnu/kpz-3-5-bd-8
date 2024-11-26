@@ -1,42 +1,20 @@
 import { Link } from "react-router-dom";
-import Table from "../../Components/Table/Table";
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import PersonForm from '../../Components/Forms/PersonForm'
+import PersonContainer from '../../Components/CardsContainers/PersonContainer'
 
 const Person = ()=>{
   const [people, setPeople] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [rows, setRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const fetchPeople = () =>{
     setIsLoading(true);
     axios.get('api/Person')
       .then(response => {
         setPeople(response.data);
-        if (response.data.length > 0) {
-          const keys = Object.keys(response.data[0]);
-          setColumns(
-            keys.map((key) => ({
-              field: key,
-              headerName: key
-              .replace(/([a-z])([A-Z])/g, "$1 $2")
-              .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
-              .replace(/^\w/, (c) => c.toUpperCase())
-              .replace(/\s\w/g, (c) => c.toLowerCase()),
-            }))
-          );
-
-          setRows(
-            response.data.map((item) => ({
-              id: item.personId,
-              ...item,
-            }))
-          );
-
-        }
-      
         setIsLoading(false);
       })
       .catch(err => {
@@ -49,11 +27,32 @@ const Person = ()=>{
   useEffect(() => {
     fetchPeople();
   }, []);
-  console.log(rows)
+
+  const handleOpenForm = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    fetchPeople();
+  };
 
   return (
-    <div>
-      <Table columns={columns} initialRows={rows} entityType={"Person"}/>
+    <div className="delivery-container">
+      <h2>Person</h2>
+
+      <button onClick={handleOpenForm} className="btn-act">Add Person</button>
+
+      <PersonContainer
+        people={people}
+        isLoading={isLoading}
+        error={error}
+      />
+
+      <PersonForm
+        open={isFormOpen}
+        onClose={handleCloseForm}
+      />
     </div>
   );
 }

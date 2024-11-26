@@ -6,6 +6,7 @@ import HomePage from './Pages/Home/HomePage';
 import Person from './Pages/Person/Person'
 import Delivery from './Pages/Delivery/Delivery'
 import DeliveryFullCard from './Components/Cards/DeliveryFullCard';
+import PersonFullCard from './Components/Cards/PersonFullCard'
 
 function App() {
     return (
@@ -14,9 +15,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/person" element={<Person />} />
-                <Route path="/delivery" element={<Delivery />} >
-                    
-                </Route>
+                <Route path="/person/:personId" element={<PersonFullCard />} />
+                <Route path="/delivery" element={<Delivery />} />
                 <Route path="/delivery/:deliveryId" element={<DeliveryFullCard />} />
             </Routes>
         </Router>

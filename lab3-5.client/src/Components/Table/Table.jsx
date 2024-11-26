@@ -12,8 +12,8 @@ const Table = ({ columns, initialRows, entityType }) => {
     }, {})
   );
   const [expandedRow, setExpandedRow] = useState(null);
-  const [editMode, setEditMode] = useState(null); // State to track the edit mode
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [editMode, setEditMode] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     setRows(initialRows);
@@ -24,13 +24,11 @@ const Table = ({ columns, initialRows, entityType }) => {
     axios
       .put(`/api/${entityType}/${id}`, updatedRow)
       .then((response) => {
-        // Переконаємося, що response.data — об'єкт
         console.log(response)
         if (typeof response.data !== "object" || response.data === null) {
           throw new Error("Invalid response data format");
         }
   
-        // Додавання id залежно від типу сутності
         if (entityType === "Person") {
           response.data.id = response.data.personId;
         } else if (entityType === "Delivery") {
@@ -39,11 +37,10 @@ const Table = ({ columns, initialRows, entityType }) => {
   
         console.log("Row updated successfully:", response.data);
   
-        // Оновлення рядка у стані
         setRows((prevRows) =>
           prevRows.map((row) => (row.id === id ? response.data : row))
         );
-        setEditMode(null); // Вихід із режиму редагування
+        setEditMode(null);
       })
       .catch((error) => {
         console.error("Error updating row:", error);
@@ -64,7 +61,6 @@ const Table = ({ columns, initialRows, entityType }) => {
   };
 
   const handleAddRow = () => {
-    //if (Object.values(newRow).every((value) => value.trim())) {
       console.log(newRow);
       axios
         .post(`/api/${entityType}`, newRow)
@@ -82,18 +78,14 @@ const Table = ({ columns, initialRows, entityType }) => {
         .catch(error => {
           console.log(error);
           if (error.response && error.response.status === 400) {
-              // Îòðèìóºìî ñïèñîê ïîìèëîê ç â³äïîâ³ä³ ñåðâåðà
               const errorMessages = error.response.data.errors;
       
-              // Ôîðìóºìî îäíå ïîâ³äîìëåííÿ ç óñ³õ ïîìèëîê
               let fullErrorMessage = '';
               for (const field in errorMessages) {
                   if (errorMessages.hasOwnProperty(field)) {
                       fullErrorMessage += `${field}: ${errorMessages[field].join(', ')}\n`;
                   }
               }
-      
-              // Âèâîäèìî ïîâ³äîìëåííÿ êîðèñòóâà÷ó (íàïðèêëàä, ÷åðåç alert àáî ó âàø UI)
               alert(error.response.data.message);
           }
           if (error.response && error.response.status === 401) {

@@ -22,8 +22,8 @@ public class PersonController : ControllerBase
         return Ok(peopleDTO);
     }
 
-    // GET: api/Person/5/show
-    [HttpGet("{id}/show")]
+    // GET: api/Person/5
+    [HttpGet("{id}")]
     public async Task<ActionResult<PersonDTO>> GetPerson(int id)
     {
         var personDTO = await _personRepository.GetPersonByIdAsync(id);
@@ -46,6 +46,7 @@ public class PersonController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<PersonDTO>> PutPerson(int id, PersonDTO personDTO)
     {
+        personDTO.PersonId = id;
         var updated = await _personRepository.UpdatePersonAsync(id, personDTO);
         if (!updated) return BadRequest();
         return Ok(personDTO);

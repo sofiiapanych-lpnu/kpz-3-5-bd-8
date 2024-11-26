@@ -139,3 +139,4 @@ D:\uni\3 course\1 sem\kpz\lab3-5\lab3-5.Server\bin\Debug\net8.0\zh-Hans\Microsof
 D:\uni\3 course\1 sem\kpz\lab3-5\lab3-5.Server\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\uni\3 course\1 sem\kpz\lab3-5\lab3-5.Server\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 D:\uni\3 course\1 sem\kpz\lab3-5\lab3-5.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\uni\3 course\1 sem\kpz\lab3-5\lab3-5.Server\obj\Debug\net8.0\lab3-5.Server.sourcelink.json

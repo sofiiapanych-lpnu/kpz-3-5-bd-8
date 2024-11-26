@@ -21,12 +21,12 @@ const Header = () => {
       <Link to="/" > 
         logo
       </Link>
-      <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Tables</button>
+      <button className="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Tables</button>
       <ul className="dropdown-menu">
         <li><Link className="dropdown-item" to="/person">Person</Link></li>
         <li><Link className="dropdown-item" to="/delivery">Delivery</Link></li>
       </ul>
-      <button className="btn btn-primary ms-auto" onClick={handleCommit}>
+      <button className="btn-commit ms-auto" onClick={handleCommit}>
         Commit
       </button>
     </header>

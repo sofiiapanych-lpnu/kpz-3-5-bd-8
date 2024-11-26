@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from './Modal';
-import axios from 'axios'; // Import axios
-import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+import './Form.css'
 
 export default function DeliveryForm({ delivery, open, onClose }) {
   const [formData, setFormData] = useState({
@@ -57,7 +57,8 @@ export default function DeliveryForm({ delivery, open, onClose }) {
       console.log(formData)
       axios.put(`/api/Delivery/${delivery.deliveryId}`, formData)
         .then(response => {
-          console.log("Delivery successfully updated:", response.data);
+          alert(response.data)
+          console.log("Delivery successfully updated:", response);
           onClose();
         })
         .catch(error => {
@@ -105,132 +106,140 @@ export default function DeliveryForm({ delivery, open, onClose }) {
 
 
   return (
-      <Modal open={open} onClick={onClose}>
-          <form style={{ width: 400 }} onSubmit={handleSubmit}>
-              <h5>{delivery ? '       Edit delivery form       ' : '       Create delivery form     '}</h5>
+    <Modal open={open} onClick={onClose}>
+        <form className="delivery-form" onSubmit={handleSubmit}>
+            <h5 className="form-title">{delivery ? 'Edit Delivery Form' : 'Create Delivery Form'}</h5>
 
-              <div className="mb-3">
-                  <label htmlFor="OrderId" className="form-label">Order ID</label>
-                  <input
-                      type="text"
-                      className="form-control"
-                      id="OrderId"
-                      name="OrderId"
-                      value={formData.OrderId}
-                      onChange={handleChange}
-                      maxLength="50"
-                      required
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="CourierId" className="form-label">Courier ID</label>
-                  <input
-                      type="text"
-                      className="form-control"
-                      id="CourierId"
-                      name="CourierId"
-                      value={formData.CourierId}
-                      onChange={handleChange}
-                      maxLength="50"
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="StartTime" className="form-label">Start Time</label>
-                  <input
-                      type="datetime-local"
-                      className="form-control"
-                      id="StartTime"
-                      name="StartTime"
-                      value={formData.StartTime}
-                      onChange={handleChange}
-                      maxLength="50"
-                      step="1"
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="EndTime" className="form-label">End Time</label>
-                  <input
-                      type="datetime-local"
-                      className="form-control"
-                      id="EndTime"
-                      name="EndTime"
-                      value={formData.EndTime}
-                      onChange={handleChange}
-                      maxLength="50"
-                      step="1"
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="DesiredDuration" className="form-label">Desired Duration</label>
-                  <input
-                      type="time"
-                      className="form-control"
-                      id="DesiredDuration"
-                      name="DesiredDuration"
-                      value={formData.DesiredDuration}
-                      onChange={handleChange}
-                      maxLength="100"
-                      required
-                      step="1"
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="ActualDuration" className="form-label">Actual Duration</label>
-                  <input
-                      type="time"
-                      className="form-control"
-                      id="ActualDuration"
-                      name="ActualDuration"
-                      value={formData.ActualDuration}
-                      onChange={handleChange}
-                      maxLength="100"
-                      step="1"
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="WarehouseId" className="form-label">Warehouse ID</label>
-                  <input
-                      type="text"
-                      className="form-control"
-                      id="WarehouseId"
-                      name="WarehouseId"
-                      value={formData.WarehouseId}
-                      onChange={handleChange}
-                      maxLength="100"
-                      required
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="AddressId" className="form-label">Address ID</label>
-                  <input
-                      type="text"
-                      className="form-control"
-                      id="AddressId"
-                      name="AddressId"
-                      value={formData.AddressId}
-                      onChange={handleChange}
-                      maxLength="100"
-                      required
-                  />
-              </div>
-              <div className="mb-3">
-                  <label htmlFor="Status" className="form-label">Status</label>
-                  <input
-                      type="text"
-                      className="form-control"
-                      id="Status"
-                      name="Status"
-                      value={formData.Status}
-                      onChange={handleChange}
-                      maxLength="100"
-                      required
-                  />
-              </div>
-              <div className="d-flex justify-content-between">
-                <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
-                <button type="submit" className="btn btn-primary">Save</button>
-              </div>
-          </form>
-      </Modal>
+            <div className="form-section">
+                <label htmlFor="OrderId" className="form-label">Order ID</label>
+                <input
+                    type="text"
+                    className="form-input"
+                    id="OrderId"
+                    name="OrderId"
+                    value={formData.OrderId}
+                    onChange={handleChange}
+                    maxLength="50"
+                    required
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="CourierId" className="form-label">Courier ID</label>
+                <input
+                    type="text"
+                    className="form-input"
+                    id="CourierId"
+                    name="CourierId"
+                    value={formData.CourierId}
+                    onChange={handleChange}
+                    maxLength="50"
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="StartTime" className="form-label">Start Time</label>
+                <input
+                    type="datetime-local"
+                    className="form-input"
+                    id="StartTime"
+                    name="StartTime"
+                    value={formData.StartTime.replace(/\.\d+$/, "")}
+                    onChange={handleChange}
+                    step="1"
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="EndTime" className="form-label">End Time</label>
+                <input
+                    type="datetime-local"
+                    className="form-input"
+                    id="EndTime"
+                    name="EndTime"
+                    value={formData.EndTime.replace(/\.\d+$/, "")}
+                    onChange={handleChange}
+                    step="1"
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="DesiredDuration" className="form-label">Desired Duration</label>
+                <input
+                    type="time"
+                    className="form-input"
+                    id="DesiredDuration"
+                    name="DesiredDuration"
+                    value={formData.DesiredDuration}
+                    onChange={handleChange}
+                    required
+                    step="1"
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="ActualDuration" className="form-label">Actual Duration</label>
+                <input
+                    type="time"
+                    className="form-input"
+                    id="ActualDuration"
+                    name="ActualDuration"
+                    value={formData.ActualDuration}
+                    onChange={handleChange}
+                    step="1"
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="WarehouseId" className="form-label">Warehouse ID</label>
+                <input
+                    type="text"
+                    className="form-input"
+                    id="WarehouseId"
+                    name="WarehouseId"
+                    value={formData.WarehouseId}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="AddressId" className="form-label">Address ID</label>
+                <input
+                    type="text"
+                    className="form-input"
+                    id="AddressId"
+                    name="AddressId"
+                    value={formData.AddressId}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+
+            <div className="form-section">
+                <label htmlFor="Status" className="form-label">Status</label>
+                <select
+                    className="form-input"
+                    id="Status"
+                    name="Status"
+                    value={formData.Status}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="" disabled>Select status</option>
+                    <option value="pending">Pending</option>
+                    <option value="in process">In Process</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+
+
+            <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={onClose}>Close</button>
+                <button type="submit" className="btn-primary">Save</button>
+            </div>
+        </form>
+    </Modal>
+
   );
 }

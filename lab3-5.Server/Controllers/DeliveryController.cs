@@ -68,33 +68,20 @@ namespace lab3_5.Server.Controllers
             reloadContext();
             var deliveries = await _deliveryRepository.GetAllDeliveriesAsync();
 
-            // ?????? ?? ????????
             if (!string.IsNullOrEmpty(status))
             {
                 deliveries = deliveries.Where(d => d.Status !=null && d.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
             }
 
-            // ?????? ?? ?????????? ?????
             if (startDate.HasValue)
             {
                 deliveries = deliveries.Where(d => d.StartTime >= startDate.Value);
             }
 
-            // ?????? ?? ???????? ?????
             if (endDate.HasValue)
             {
                 deliveries = deliveries.Where(d => d.EndTime <= endDate.Value);
             }
-
-            //// ?????? ?? ????????? ???????
-            //if (!string.IsNullOrEmpty(query))
-            //{
-            //    string lowerQuery = query.ToLower();
-            //    deliveries = deliveries.Where(d =>
-            //        d.Status.ToLower().Contains(lowerQuery) ||
-            //        (d.Description != null && d.Description.ToLower().Contains(lowerQuery))
-            //    );
-            //}
 
             return Ok(deliveries);
         }
@@ -112,6 +99,7 @@ namespace lab3_5.Server.Controllers
         public async Task<ActionResult<DeliveryDTO>> GetDelivery(int id)
         {
             //reloadContext();
+            _deliveryRepository.setContext(_context);
             var deliveryDTO = await _deliveryRepository.GetDeliveryByIdAsync(id);
             if (deliveryDTO == null)
             {
@@ -164,31 +152,39 @@ namespace lab3_5.Server.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<DeliveryDTO>> PutDelivery(int id, DeliveryDTO deliveryDTO)
         {
-            //reloadContext();
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                    //reloadContext();
+                    if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                deliveryDTO.EndTime ??= null;
+                deliveryDTO.ActualDuration ??= null;
+                //var updatedDelivery = new DeliveryDTO
+                //{
+                //    DeliveryId = id,
+                //    OrderId = deliveryDTO.OrderId,
+                //    CourierId = deliveryDTO.CourierId,
+                //    StartTime = deliveryDTO.StartTime,
+                //    EndTime = deliveryDTO.EndTime,
+                //    DesiredDuration = deliveryDTO.DesiredDuration,
+                //    ActualDuration = deliveryDTO.ActualDuration,
+                //    WarehouseId = deliveryDTO.WarehouseId,
+                //    AddressId = deliveryDTO.AddressId,
+                //    Status = deliveryDTO.Status
+                //};
+                deliveryDTO.DeliveryId = id;
+                //var updated = await _deliveryRepository.UpdateDeliveryAsync(id, updatedDelivery);
+                var updated = await UpdateDeliveryAsync_(id, deliveryDTO);
+
+                return Ok(updated);
             }
-
-            deliveryDTO.EndTime ??= null;
-            deliveryDTO.ActualDuration ??= null;
-            var updatedDelivery = new DeliveryDTO
+            catch (DbUpdateException e)
             {
-                DeliveryId = id,
-                OrderId = deliveryDTO.OrderId,
-                CourierId = deliveryDTO.CourierId,
-                StartTime = deliveryDTO.StartTime,
-                EndTime = deliveryDTO.EndTime,
-                DesiredDuration = deliveryDTO.DesiredDuration,
-                ActualDuration = deliveryDTO.ActualDuration,
-                WarehouseId = deliveryDTO.WarehouseId,
-                AddressId = deliveryDTO.AddressId,
-                Status = deliveryDTO.Status
-            };
-
-            var updated = await _deliveryRepository.UpdateDeliveryAsync(id, updatedDelivery);
-            if (!updated) return BadRequest();
-            return Ok(deliveryDTO);
+                return StatusCode(401, new { message = "Error: " + e.Message, details = e.InnerException?.Message });
+            }
         }
 
         // DELETE: api/Delivery/5
@@ -253,7 +249,7 @@ namespace lab3_5.Server.Controllers
 
             try
             {
-                current_transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+                current_transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
                 return msg + "\nTransaction started.\n";
             }
             catch (InvalidOperationException ex)
@@ -265,7 +261,6 @@ namespace lab3_5.Server.Controllers
                 return "Database update error: " + ex.Message;
             }
         }
-
 
         private async Task<string> Commit_()
         {
@@ -304,6 +299,66 @@ namespace lab3_5.Server.Controllers
             else
             {
                 return "No active transaction.";
+            }
+        }
+
+        private async Task<string> UpdateDeliveryAsync_(int id, DeliveryDTO updatedDeliveryDTO)
+        {
+            if (id != updatedDeliveryDTO.DeliveryId)
+                return "Params not valid";
+
+            var existingDelivery = await _context.Deliveries.FindAsync(id);
+            if (existingDelivery == null)
+                return "Delivery is not found";
+
+            existingDelivery.OrderId = updatedDeliveryDTO.OrderId;
+            existingDelivery.CourierId = updatedDeliveryDTO.CourierId;
+            existingDelivery.StartTime = updatedDeliveryDTO.StartTime;
+            existingDelivery.EndTime = updatedDeliveryDTO.EndTime;
+            existingDelivery.DesiredDuration = updatedDeliveryDTO.DesiredDuration;
+            existingDelivery.ActualDuration = updatedDeliveryDTO.ActualDuration;
+            existingDelivery.WarehouseId = updatedDeliveryDTO.WarehouseId;
+            existingDelivery.AddressId = updatedDeliveryDTO.AddressId;
+            existingDelivery.Status = updatedDeliveryDTO.Status;
+
+            //_context.Entry(existingDelivery).State = EntityState.Modified;
+
+            try
+            {
+                _context.Database.SetCommandTimeout(2);
+                _context.SaveChanges();
+                return "Changes saved.";
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                return "Concurrency error while saving: " + ex.Message;
+            }
+            catch (DbUpdateException ex)
+            {
+                return "Database update error: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                if (current_transaction != null)
+                {
+                    try
+                    {
+                        current_transaction.Rollback();
+                    }
+                    catch (Exception e)
+                    {
+                        try
+                        {
+                            current_transaction.Dispose();
+                        }
+                        catch (Exception exc)
+                        {
+                            Console.WriteLine(exc.Message);
+                        }
+                    }
+                }
+                reloadContext();
+                return "Unexpected error: " + ex.Message;
             }
         }
     }

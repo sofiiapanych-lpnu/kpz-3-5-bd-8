@@ -44,14 +44,13 @@ public partial class DeliveryDTO
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if (value is DateOnly date)
+            if (value is DateTime dateTime)
             {
-                if (date.Year <= 1900)
+                if (dateTime.Year <= 1900)
                 {
                     return new ValidationResult(ErrorMessage ?? "Date must be after the year 1900.");
                 }
             }
-
             return ValidationResult.Success;
         }
     }

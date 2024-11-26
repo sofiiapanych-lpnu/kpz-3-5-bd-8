@@ -12,7 +12,7 @@ export default function Modal({ children, open, onClick }) {
       }
   }, [open])
 
-  return createPortal( //dom
+  return createPortal(
       <dialog ref={dialog}>
           {children}
       </dialog>,

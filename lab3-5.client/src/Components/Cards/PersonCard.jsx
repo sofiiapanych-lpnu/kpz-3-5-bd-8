@@ -1,67 +1,26 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './DeliveryCard.css'
 
-const Card = ({
-  row,
-  columns,
-  editMode,
-  setEditMode,
-  handleUpdateRow,
-  handleDeleteRow,
-  renderCellContent,
-  handleCancelEdit
-}) => {
-  return (
-    <div className="card mb-3 shadow-sm">
-      <div className="card-body">
-        <h5 className="card-title">
-          {row.name || `Card #${row.id}`}
-        </h5>
-        <h6 className="card-subtitle mb-2 text-muted">
-          ID: {row.id}
-        </h6>
-
-        <div className="row">
-          {columns.map((column, colIndex) => (
-            <div
-              key={`${row.id}-${column.field}`}
-              className="col-12 col-md-6 mb-2"
-            >
-              <strong>{column.headerName}:</strong>{" "}
-              {renderCellContent(row, column, colIndex)}
+const PersonCard = ({ person }) => {
+    return (
+        <div className="card mb-4 delivery-card">
+            <div className="card-body">
+                <div className="highlight-id">
+                    <h4>Person ID: {person.personId}</h4>
+                </div>
+                <div className="details">
+                    <div className="detail-item">
+                        <h5>Last Name: <span>{person.lastName}</span></h5>
+                    </div>
+                </div>
+                <div className="text-end">
+                    <Link className="btn btn-sm" to={`/person/${person.personId}`}>Show more</Link>
+                </div>
             </div>
-          ))}
         </div>
-
-        <div className="mt-3 d-flex justify-content-end gap-2">
-          {editMode === row.id ? (
-            <div>
-              <button
-              className="btn btn-success btn-sm"
-              onClick={() => handleUpdateRow(row.id, row)}>
-              Update
-              </button>
-              <button className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              className="btn btn-warning btn-sm"
-              onClick={() => setEditMode(row.id)}
-            >
-              Edit
-            </button>
-          )}
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => handleDeleteRow(row.id)}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default Card;
+export default PersonCard;
+
