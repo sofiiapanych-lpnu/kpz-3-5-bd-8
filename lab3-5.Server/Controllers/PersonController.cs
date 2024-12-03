@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 public class PersonController : ControllerBase
 {
     private readonly IPersonRepository _personRepository;
+    private readonly PhantomTransactionConflictSimulator _simulator;
 
     public PersonController(IPersonRepository personRepository)
     {
         _personRepository = personRepository;
+        _simulator = new PhantomTransactionConflictSimulator();
     }
 
     // GET: api/Person
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PersonDTO>>> GetPeople()
     {
+        await _simulator.SimulatePhantomAnomaly();
         var peopleDTO = await _personRepository.GetAllPeopleAsync();
         return Ok(peopleDTO);
     }

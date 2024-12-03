@@ -66,22 +66,39 @@ namespace lab3_5.Server.Controllers
     [FromQuery] DateTime? endDate)
         {
             reloadContext();
-            var deliveries = await _deliveryRepository.GetAllDeliveriesAsync();
+            var query = _context.Deliveries.AsQueryable();
 
             if (!string.IsNullOrEmpty(status))
             {
-                deliveries = deliveries.Where(d => d.Status !=null && d.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                var normalizedStatus = status.ToLower();
+                query = query.Where(d => d.Status != null && d.Status.ToLower() == normalizedStatus);
             }
 
             if (startDate.HasValue)
             {
-                deliveries = deliveries.Where(d => d.StartTime >= startDate.Value);
+                query = query.Where(d => d.StartTime >= startDate.Value);
             }
 
             if (endDate.HasValue)
             {
-                deliveries = deliveries.Where(d => d.EndTime <= endDate.Value);
+                query = query.Where(d => d.EndTime <= endDate.Value);
             }
+
+            var deliveries = await query
+                .Select(d => new DeliveryDTO
+                {
+                    DeliveryId = d.DeliveryId,
+                    OrderId = d.OrderId,
+                    CourierId = d.CourierId,
+                    StartTime = d.StartTime,
+                    EndTime = d.EndTime,
+                    DesiredDuration = d.DesiredDuration,
+                    ActualDuration = d.ActualDuration,
+                    WarehouseId = d.WarehouseId,
+                    AddressId = d.AddressId,
+                    Status = d.Status
+                })
+                .ToListAsync();
 
             return Ok(deliveries);
         }
